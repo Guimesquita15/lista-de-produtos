@@ -2,96 +2,52 @@
 #include <vector>
 #include <string>
 
-using namespace std;
-
-// Definição da estrutura de um produto
 struct Produto {
-    int numero;
-    string nome;
-    double precoCompra;
-    double precoVenda;
+    std::string nome;
+    double preco_compra;
+    double preco_venda;
     double lucro;
-    int stock;
-    int quantidadeComprada;
-    int quantidadeVendida;
+    int quantidade_comprada;
+    int quantidade_vendida;
 };
 
-// Função para calcular o lucro de um produto
-double calcularLucro(const Produto& produto) {
-    return produto.precoVenda - produto.precoCompra;
-}
+// Função para adicionar um produto ao vetor de produtos
+void adicionarProduto(std::vector<Produto>& produtos) {
+    Produto novo_produto;
+    std::cout << "Digite o nome do produto: ";
+    std::cin >> novo_produto.nome;
+    std::cout << "Digite o preço de compra do produto: R$";
+    std::cin >> novo_produto.preco_compra;
+    std::cout << "Digite o preço de venda do produto: R$";
+    std::cin >> novo_produto.preco_venda;
+    novo_produto.lucro = novo_produto.preco_venda - novo_produto.preco_compra;
+    std::cout << "Digite a quantidade comprada do produto: ";
+    std::cin >> novo_produto.quantidade_comprada;
+    std::cout << "Digite a quantidade vendida do produto: ";
+    std::cin >> novo_produto.quantidade_vendida;
 
-// Função para adicionar um produto à lista
-void adicionarProduto(vector<Produto>& listaProdutos) {
-    Produto novoProduto;
-    
-    cout << "Digite o número do produto: ";
-    cin >> novoProduto.numero;
-    cout << "Digite o nome do produto: ";
-    cin.ignore(); // Limpar o buffer do teclado
-    getline(cin, novoProduto.nome);
-    cout << "Digite o preço de compra: ";
-    cin >> novoProduto.precoCompra;
-    cout << "Digite o preço de venda: ";
-    cin >> novoProduto.precoVenda;
-    cout << "Digite o número em estoque: ";
-    cin >> novoProduto.stock;
-    cout << "Digite o número de produtos comprados: ";
-    cin >> novoProduto.quantidadeComprada;
-    cout << "Digite o número de produtos vendidos: ";
-    cin >> novoProduto.quantidadeVendida;
-    
-    // Calcular o lucro do novo produto
-    novoProduto.lucro = calcularLucro(novoProduto);
-    
-    // Adicionar o novo produto à lista
-    listaProdutos.push_back(novoProduto);
-    
-    cout << "Produto adicionado com sucesso!" << endl;
-}
-
-// Função para exibir os detalhes de todos os produtos
-void mostrarProdutos(const vector<Produto>& listaProdutos) {
-    cout << "Lista de Produtos:" << endl;
-    for (const Produto& produto : listaProdutos) {
-        cout << "Número do Produto: " << produto.numero << endl;
-        cout << "Nome do Produto: " << produto.nome << endl;
-        cout << "Preço de Compra: " << produto.precoCompra << endl;
-        cout << "Preço de Venda: " << produto.precoVenda << endl;
-        cout << "Lucro: " << produto.lucro << endl;
-        cout << "Estoque: " << produto.stock << endl;
-        cout << "Quantidade Comprada: " << produto.quantidadeComprada << endl;
-        cout << "Quantidade Vendida: " << produto.quantidadeVendida << endl;
-        cout << "------------------------------------" << endl;
-    }
+    produtos.push_back(novo_produto); // Adiciona o novo produto ao vetor
 }
 
 int main() {
-    vector<Produto> listaProdutos;
-    int opcao;
+    std::vector<Produto> produtos;
 
-    do {
-        cout << "Escolha uma opção:" << endl;
-        cout << "1. Adicionar Produto" << endl;
-        cout << "2. Mostrar Produtos" << endl;
-        cout << "0. Sair" << endl;
-        cout << "Opção: ";
-        cin >> opcao;
+    // Adiciona produtos manualmente (pode ser substituído por um loop para adicionar vários produtos)
+    adicionarProduto(lapis );
+    adicionarProduto(caderno);
+    adicionarProduto(borracha);
 
-        switch (opcao) {
-            case 1:
-                adicionarProduto(listaProdutos);
-                break;
-            case 2:
-                mostrarProdutos(listaProdutos);
-                break;
-            case 0:
-                cout << "Saindo..." << endl;
-                break;
-            default:
-                cout << "Opção inválida! Tente novamente." << endl;
-        }
-    } while (opcao != 0);
+    // Imprime as informações de cada produto
+    std::cout << "Informações dos Produtos:\n";
+    for (const auto& produto : produtos) {
+        std::cout << "Nome: " << produto.nome << "\n";
+        std::cout << "Preço de Compra: R$" << produto.preco_compra << "\n";
+        std::cout << "Preço de Venda: R$" << produto.preco_venda << "\n";
+        std::cout << "Lucro: R$" << produto.lucro << "\n";
+        std::cout << "Quantidade Comprada: " << produto.quantidade_comprada << "\n";
+        std::cout << "Quantidade Vendida: " << produto.quantidade_vendida << "\n";
+        std::cout << "------------------------\n";
+    }
 
     return 0;
 }
