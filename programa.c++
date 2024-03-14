@@ -1,53 +1,161 @@
 #include <iostream>
-#include <vector>
 #include <string>
+#include <vector>
+using namespace std;
 
 struct Produto {
-    std::string nome;
+    string nome;
     double preco_compra;
-    double preco_venda;
-    double lucro;
-    int quantidade_comprada;
-    int quantidade_vendida;
+    double lucro_porcentagem;
+    int quantidade;
 };
 
-// Função para adicionar um produto ao vetor de produtos
-void adicionarProduto(std::vector<Produto>& produtos) {
-    Produto novo_produto;
-    std::cout << "Digite o nome do produto: ";
-    std::cin >> novo_produto.nome;
-    std::cout << "Digite o preço de compra do produto: R$";
-    std::cin >> novo_produto.preco_compra;
-    std::cout << "Digite o preço de venda do produto: R$";
-    std::cin >> novo_produto.preco_venda;
-    novo_produto.lucro = novo_produto.preco_venda - novo_produto.preco_compra;
-    std::cout << "Digite a quantidade comprada do produto: ";
-    std::cin >> novo_produto.quantidade_comprada;
-    std::cout << "Digite a quantidade vendida do produto: ";
-    std::cin >> novo_produto.quantidade_vendida;
+const double taxa_conversao = 0.15; // Taxa de conversão de real para euro
 
-    produtos.push_back(novo_produto); // Adiciona o novo produto ao vetor
+Produto* buscarProduto(vector<Produto>& produtos, string nome_produto) {
+    for (auto& produto : produtos) {
+        if (produto.nome == nome_produto) {
+            return &produto;
+        }
+    }
+    return nullptr;
+}
+
+void venderProduto(Produto* produto, int quantidade_vendida) {
+    if (produto != nullptr) {
+        if (produto->quantidade >= quantidade_vendida) {
+            double lucro = (produto->lucro_porcentagem / 10) * produto->preco_compra * taxa_conversao;
+            double valor_venda = produto->preco_compra * taxa_conversao + lucro;
+            double total_lucro = (valor_venda - produto->preco_compra * taxa_conversao) * quantidade_vendida;
+            produto->quantidade -= quantidade_vendida;
+            cout << "Lucro total da venda de " << produto->nome << ": €" << total_lucro << endl;
+            cout << "Quantidade vendida: " << quantidade_vendida << ", Valor de venda unitário: €" << valor_venda << endl;
+        } else {
+            cout << "Quantidade insuficiente de " << produto->nome << " em estoque." << endl;
+        }
+    } else {
+        cout << "Produto não encontrado." << endl;
+    }
+}
+void calcularQuantidadeComprar(vector<Produto>& produtos) {
+    for (auto& produto : produtos) {
+        int quantidade_minima = 300; // Defina a quantidade mínima desejada aqui
+        int quantidade_recomendada = quantidade_minima - produto.quantidade;
+        if (quantidade_recomendada > 0) {
+            cout << "Produto: " << produto.nome << ", Quantidade a comprar: " << quantidade_recomendada << endl;
+        } else {
+            cout << "Produto: " << produto.nome << ", Estoque suficiente" << endl;
+        }
+    }
+}
+
+
+void imprimirInformacoes(vector<Produto>& produtos) {
+    for (auto& produto : produtos) {
+        double preco_em_euro = produto.preco_compra * taxa_conversao;
+        cout << "Nome: " << produto.nome << ", Quantidade em estoque: " << produto.quantidade << ", Preço em euro: €" << preco_em_euro << endl;
+    }
+}
+void finalizarCompra(Produto* produto, int quantidade_vendida, double valor_pago) {
+    if (produto != nullptr) {
+        double lucro = (produto->lucro_porcentagem / 100) * produto->preco_compra * taxa_conversao;
+        double valor_venda_unitario = produto->preco_compra * taxa_conversao + lucro;
+        double valor_total = valor_venda_unitario * quantidade_vendida;
+        if (valor_pago >= valor_total) {
+            double troco = valor_pago - valor_total;
+            cout << "Compra finalizada!" << endl;
+            cout << "Valor total da compra: €" << valor_total << endl;
+            cout << "Valor pago: €" << valor_pago << endl;
+            cout << "Troco a entregar: €" << troco << endl;
+        } else {
+            cout << "Valor insuficiente para realizar a compra." << endl;
+        }
+    } else {
+        cout << "Produto não encontrado." << endl;
+    }
+}
+
+
+double calcularLucroTotal(vector<Produto>& produtos) {
+    double lucro_total = 0;
+    for (auto& produto : produtos) {
+        double lucro = (produto.lucro_porcentagem / 100) * produto.preco_compra * taxa_conversao * produto.quantidade;
+        lucro_total += lucro;
+    }
+    return lucro_total;
 }
 
 int main() {
-    std::vector<Produto> produtos;
-
-    // Adiciona produtos manualmente (pode ser substituído por um loop para adicionar vários produtos)
-    adicionarProduto(lapis );
-    adicionarProduto(caderno);
-    adicionarProduto(borracha);
-
-    // Imprime as informações de cada produto
-    std::cout << "Informações dos Produtos:\n";
-    for (const auto& produto : produtos) {
-        std::cout << "Nome: " << produto.nome << "\n";
-        std::cout << "Preço de Compra: R$" << produto.preco_compra << "\n";
-        std::cout << "Preço de Venda: R$" << produto.preco_venda << "\n";
-        std::cout << "Lucro: R$" << produto.lucro << "\n";
-        std::cout << "Quantidade Comprada: " << produto.quantidade_comprada << "\n";
-        std::cout << "Quantidade Vendida: " << produto.quantidade_vendida << "\n";
-        std::cout << "------------------------\n";
+    vector<Produto> produtos = {{"caneta", 1.0, 25.0, 150}, {"caderno", 2.0, 30.0, 100}, {"pasta", 3.0, 20.0, 80}, {"lápis", 1.0, 15.0, 250}};
+    int opcao;
+    do {
+       cout << "1. Vender produto" << endl;
+        cout << "2. Imprimir quantidade em estoque de todos os produtos (em euro)" << endl;
+        cout << "3. Imprimir lucro total da venda de todos os produtos (em euro)" << endl;
+        cout << "4. Calcular quantidade a comprar" << endl;
+        cout << "5.  Metodo de pagamento do Produto " <<endl;
+        cout << "Escolha uma opção: ";
+        cin >> opcao;
+        switch (opcao) {
+            case 1: {
+                string nome_produto;
+                int quantidade_vendida;
+                cout << "Nome do produto a ser vendido: ";
+                cin >> nome_produto;
+                Produto* produto = buscarProduto(produtos, nome_produto);
+                if (produto != nullptr) {
+                    cout << "Quantidade a ser vendida: ";
+                    cin >> quantidade_vendida;
+                    if (produto->quantidade >= quantidade_vendida) {
+                        venderProduto(produto, quantidade_vendida);
+                        double valor_total = (produto->preco_compra * taxa_conversao + (produto->lucro_porcentagem / 100) * produto->preco_compra * taxa_conversao) * quantidade_vendida;
+                        cout << "Valor total: €" << valor_total << endl;
+                    } else {
+                        cout << "Quantidade insuficiente em estoque." << endl;
+                    }
+                } else {
+                    cout << "Produto não encontrado." << endl;
+                }
+                break;
+            }
+            case 2: {
+                imprimirInformacoes(produtos);
+                break;
+            }
+            case 3: {
+                double lucro_total = calcularLucroTotal(produtos);
+                cout << "Lucro total da venda de todos os produtos: €" << lucro_total << endl;
+                break;
+            }
+              case 4: {
+                calcularQuantidadeComprar(produtos);
+                break;
+            }
+            case 5: {
+    string nome_produto;
+    int quantidade_vendida;
+    double valor_pago;
+    cout << "Nome do produto a ser vendido: ";
+    cin >> nome_produto;
+    Produto* produto = buscarProduto(produtos, nome_produto);
+    if (produto != nullptr) {
+        cout << "Quantidade a ser vendida: ";
+        cin >> quantidade_vendida;
+        cout << "Valor pago: €";
+        cin >> valor_pago;
+        finalizarCompra(produto, quantidade_vendida, valor_pago);
+    } else {
+        cout << "Produto não encontrado." << endl;
     }
+    break;
+}
 
-    return 0;
+            
+            default: {
+                cout << "Opção inválida. Por favor, tente novamente." << endl;
+            }
+        }
+    } while (opcao != 6);
+
+    return 0;
 }
